@@ -26,6 +26,7 @@ class DepartmentResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->unique()
                     ->required()
                     ->maxLength(225),
                 Forms\Components\Textarea::make('description')
@@ -38,6 +39,7 @@ class DepartmentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('description')
             ])
