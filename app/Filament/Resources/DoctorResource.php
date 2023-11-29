@@ -63,7 +63,8 @@ class DoctorResource extends Resource
                             ->visible(fn (?Model $record): bool => is_null($record) ),
                         Textarea::make('profile.address')
                             ->columnSpan(2),
-                        DatePicker::make('profile.birth_date'),
+                        DatePicker::make('profile.birth_date')
+                            ->native(false),
                         Select::make('profile.gender')
                             ->options([
                                 'male' => 'Male',
