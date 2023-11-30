@@ -1,27 +1,35 @@
 <?php
 
-namespace App\Filament\Resources\DoctorResource\Pages;
+namespace App\Filament\Resources\UserResource\Pages;
 
 use Exception;
 use Filament\Actions;
 use App\Models\Profile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Resources\Pages\EditRecord;
-use App\Filament\Resources\DoctorResource;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\UserResource;
+use Filament\Resources\Pages\EditRecord;
 
-class EditDoctor extends EditRecord
+class EditUser extends EditRecord
 {
-    protected static string $resource = DoctorResource::class;
+    protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
         ];
     }
 
+    protected function getRedirectUrl(): ?string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $profile = Profile::where('user_id', $data['id'])->first()->toArray();
@@ -33,6 +41,9 @@ class EditDoctor extends EditRecord
         return $data;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         DB::beginTransaction();

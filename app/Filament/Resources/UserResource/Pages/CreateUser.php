@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\DoctorResource\Pages;
+namespace App\Filament\Resources\UserResource\Pages;
 
 use Exception;
 use App\Models\User;
@@ -10,13 +10,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
-use App\Filament\Resources\DoctorResource;
+use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreateDoctor extends CreateRecord
+class CreateUser extends CreateRecord
 {
-    protected static string $resource = DoctorResource::class;
+    protected static string $resource = UserResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function handleRecordCreation(array $data): Model
     {
         DB::beginTransaction();
