@@ -7,10 +7,12 @@ use App\Models\User;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -19,15 +21,22 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\DoctorResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\DoctorResource\RelationManagers;
-use Illuminate\Support\Arr;
+use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Support\Facades\Storage;
 
 class DoctorResource extends Resource
 {
+    protected static ?string $breadcrumb = 'Doctors';
+
     protected static ?string $model = User::class;
 
     protected static ?string $navigationLabel = 'Doctors';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $pluralModelLabel = 'doctors';
+
+    protected static ?string $modelLabel = 'doctor';
 
     public static function form(Form $form): Form
     {
@@ -86,14 +95,34 @@ class DoctorResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('roles', function ($innerQuery) {
+                return $innerQuery->where('name', 'Doctor');
+            }))
             ->columns([
-                //
+                ImageColumn::make('profile.avatar'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('email'),
+                TextColumn::make('profile.national_id_number')
+                    ->label('National ID Number'),
+                TextColumn::make('profile.mobile_number')
+                    ->label('Mobile Number'),
+                TextColumn::make('profile.department.name')
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function(User $record) {
+                        if (! is_null($record->profile->avatar)) {
+                            Storage::disk('public')->delete($record->profile->avatar);
+                        }
+                        $record->profile()->delete();
+                        $record->removeRole('Doctor');
+                    })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

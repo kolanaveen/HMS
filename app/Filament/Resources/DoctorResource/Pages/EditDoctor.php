@@ -59,9 +59,10 @@ class EditDoctor extends EditRecord
                 'department_id' => $data['profile']['department_id']
             ]);
 
+            DB::commit();
+
             return $record;
 
-            DB::commit();
         } catch (Exception $e) {
             DB::rollback();
             Log::debug($e->getMessage());
