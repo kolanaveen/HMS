@@ -7,36 +7,27 @@ use App\Models\User;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Support\Arr;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\DoctorResource\Pages;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\DoctorResource\RelationManagers;
-use Filament\Tables\Columns\ImageColumn;
-use Illuminate\Support\Facades\Storage;
+use App\Filament\Resources\UserResource\RelationManagers;
 
-class DoctorResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $breadcrumb = 'Doctors';
-
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationLabel = 'Doctors';
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $pluralModelLabel = 'doctors';
-
-    protected static ?string $modelLabel = 'doctor';
 
     public static function form(Form $form): Form
     {
@@ -96,7 +87,7 @@ class DoctorResource extends Resource
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('roles', function ($innerQuery) {
-                return $innerQuery->where('name', 'Doctor');
+                return $innerQuery->where('name', '!=', 'Super Admin');
             }))
             ->columns([
                 ImageColumn::make('profile.avatar'),
@@ -104,11 +95,16 @@ class DoctorResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email'),
+                TextColumn::make('roles.name')
+                    ->label('Role'),
                 TextColumn::make('profile.national_id_number')
                     ->label('National ID Number'),
                 TextColumn::make('profile.mobile_number')
                     ->label('Mobile Number'),
-                TextColumn::make('profile.department.name')
+                TextColumn::make('profile.department.name'),
+                TextColumn::make('created_at')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
                 //
@@ -141,9 +137,9 @@ class DoctorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListDoctors::route('/'),
-            'create' => Pages\CreateDoctor::route('/create'),
-            'edit' => Pages\EditDoctor::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
