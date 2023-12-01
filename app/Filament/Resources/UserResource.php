@@ -46,11 +46,17 @@ class UserResource extends Resource
                                         ->required()
                                         ->native(false)
                                         ->searchable(),
-                                    FileUpload::make('profile.avatar')
-                                        ->disk('public')
-                                        ->directory('doctors/avatar')
-                                        ->image()
+                                    Select::make('profile.department_id')
+                                        ->label('Department')
+                                        ->relationship('profile.department', 'name')
+                                        ->native(false)
+                                        ->required(),
                                 ])->columns(),
+                            FileUpload::make('profile.avatar')
+                                ->disk('public')
+                                ->directory('doctors/avatar')
+                                ->image()
+                                ->columnSpan('full'),
                             TextInput::make('profile.first_name')
                                 ->required(),
                             TextInput::make('profile.last_name')
@@ -86,10 +92,6 @@ class UserResource extends Resource
                             TextInput::make('profile.emergency_number')
                                 ->tel(),
                             TextInput::make('profile.blood_group'),
-                            Select::make('profile.department_id')
-                                ->label('Department')
-                                ->relationship('profile.department', 'name')
-                                ->native(false)
                         ])->columns(2),
                 ])
             ])->columns(1);
