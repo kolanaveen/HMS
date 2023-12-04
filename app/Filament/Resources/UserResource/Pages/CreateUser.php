@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\CreateRecord;
+use Spatie\Permission\Models\Role;
 
 class CreateUser extends CreateRecord
 {
@@ -36,7 +37,8 @@ class CreateUser extends CreateRecord
                 'password' => Hash::make($data['password'])
             ]);
 
-            $user->assignRole($data['role']);
+            $role = Role::find($data['role']);
+            $user->assignRole($role->name);
 
             Profile::create([
                 'user_id' => $user->id,
