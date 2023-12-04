@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use App\Models\User;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -13,6 +15,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
@@ -33,61 +36,73 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('')
-                    ->schema([
-                        FileUpload::make('profile.avatar')
-                            ->disk('public')
-                            ->directory('doctors/avatar')
-                            ->image()
-                    ])
-                    ->columns(3),
-                Section::make('Personal Details')
-                    ->schema([
-                        TextInput::make('profile.first_name')
-                            ->required(),
-                        TextInput::make('profile.last_name')
-                            ->required(),
-                        TextInput::make('email')
-                            ->required()
-                            ->email()
-                            ->unique(ignoreRecord: true),
-                        TextInput::make('profile.national_id_number'),
-                        TextInput::make('password')
-                            ->required()
-                            ->password()
-                            ->confirmed()
-                            ->visible(fn (?Model $record): bool => is_null($record) ),
-                        TextInput::make('password_confirmation')
-                            ->password()
-                            ->required()
-                            ->visible(fn (?Model $record): bool => is_null($record) ),
-                        Textarea::make('profile.address')
-                            ->columnSpan(2),
-                        DatePicker::make('profile.birth_date')
-                            ->native(false),
-                        Select::make('profile.gender')
-                            ->options([
-                                'male' => 'Male',
-                                'female' => 'Female'
-                            ]),
-                        TextInput::make('profile.mobile_number')
-                            ->tel(),
-                        TextInput::make('profile.emergency_number')
-                            ->tel(),
-                        TextInput::make('profile.blood_group'),
-                        Select::make('profile.department_id')
-                            ->label('Department')
-                            ->relationship('profile.department', 'name')
-                    ])
-                    ->columns(2)
-            ]);
+                Tabs::make('')->tabs([
+                    Tab::make('Personal Information')
+                        ->schema([
+                            Section::make('')
+                                ->schema([
+                                    Select::make('role')
+                                        ->relationship('roles', 'name')
+                                        ->required()
+                                        ->native(false)
+                                        ->preload()
+                                        ->searchable(),
+                                    Select::make('profile.department_id')
+                                        ->label('Department')
+                                        ->relationship('profile.department', 'name')
+                                        ->native(false)
+                                        ->required(),
+                                ])->columns(),
+                            FileUpload::make('profile.avatar')
+                                ->disk('public')
+                                ->directory('doctors/avatar')
+                                ->image()
+                                ->columnSpan('full'),
+                            TextInput::make('profile.first_name')
+                                ->required(),
+                            TextInput::make('profile.last_name')
+                                ->required(),
+                            TextInput::make('email')
+                                ->required()
+                                ->email()
+                                ->unique(ignoreRecord: true),
+                            Select::make('profile.gender')
+                                ->options([
+                                    'male' => 'Male',
+                                    'female' => 'Female'
+                                ])->native(false),
+                            TextInput::make('password')
+                                ->required()
+                                ->password()
+                                ->confirmed()
+                                ->visible(fn (?Model $record): bool => is_null($record) ),
+                            TextInput::make('password_confirmation')
+                                ->password()
+                                ->required()
+                                ->visible(fn (?Model $record): bool => is_null($record) ),
+                        ])->columns(2),
+                    Tab::make('Additional Information')
+                        ->schema([
+                            Textarea::make('profile.address')
+                                ->columnSpan(2),
+                            DatePicker::make('profile.birth_date')
+                                ->native(false),
+                            TextInput::make('profile.national_id_number'),
+                            TextInput::make('profile.mobile_number')
+                                ->tel(),
+                            TextInput::make('profile.emergency_number')
+                                ->tel(),
+                            TextInput::make('profile.blood_group'),
+                        ])->columns(2),
+                ])
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('roles', function ($innerQuery) {
-                return $innerQuery->where('name', '!=', 'Super Admin');
+                return $innerQuery->where('name', '!=', User::ROLE_ADMIN);
             }))
             ->columns([
                 ImageColumn::make('profile.avatar'),

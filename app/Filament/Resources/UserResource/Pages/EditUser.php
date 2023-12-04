@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Models\User;
 use Exception;
 use Filament\Actions;
 use App\Models\Profile;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use App\Filament\Resources\UserResource;
 use Filament\Resources\Pages\EditRecord;
+use Spatie\Permission\Models\Role;
 
 class EditUser extends EditRecord
 {
@@ -53,6 +55,11 @@ class EditUser extends EditRecord
                 'name' => $data['profile']['first_name'] . ' ' . $data['profile']['last_name'],
                 'email' => $data['email']
             ]);
+
+            if (is_string($data['role'])) {
+                $role = Role::find($data['role']);
+                $record->assignRole($role->name);
+            }
 
             $profile = $record->profile;
 
