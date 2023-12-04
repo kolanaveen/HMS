@@ -26,7 +26,9 @@ class ListUsers extends ListRecords
      */
     public function getTabs(): array
     {
-        $tabs = ['All Users' => Tab::make('All Users')->badge($this->getModel()::count())];
+        $tabs = ['All Users' => Tab::make('All Users')->badge($this->getModel()::whereHas('roles', function ($innerQuery) {
+            return $innerQuery->where('name', '!=', User::ROLE_ADMIN);
+        })->count())];
 
         $roles = Role::where('name', '!=', User::ROLE_ADMIN)->with('users')->get();
 
