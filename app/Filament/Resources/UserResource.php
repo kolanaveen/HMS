@@ -45,6 +45,7 @@ class UserResource extends Resource
                                         ->relationship('roles', 'name')
                                         ->required()
                                         ->native(false)
+                                        ->preload()
                                         ->searchable(),
                                     Select::make('profile.department_id')
                                         ->label('Department')
