@@ -19,7 +19,7 @@ class User extends Authenticatable
     public const ROLE_ADMIN = 'Super Admin';
     public const ROLE_DOCTOR = 'Doctor';
     public const ROLE_PATIENT = 'Patient';
-    public const ROLE_STAFF = 'STAFF';
+    public const ROLE_STAFF = 'Staff';
     /**
      * The attributes that are mass assignable.
      *
