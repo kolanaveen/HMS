@@ -42,7 +42,7 @@ class UserResource extends Resource
                             Section::make('')
                                 ->schema([
                                     Select::make('role')
-                                        ->options(DB::table('roles')->pluck('name', 'name'))
+                                        ->relationship('roles', 'name')
                                         ->required()
                                         ->native(false)
                                         ->searchable(),
