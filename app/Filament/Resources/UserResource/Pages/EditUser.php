@@ -56,8 +56,10 @@ class EditUser extends EditRecord
                 'email' => $data['email']
             ]);
 
-            $role = Role::find($data['role']);
-            User::find($record->id)->assignRole($role->name);
+            if (is_string($data['role'])) {
+                $role = Role::find($data['role']);
+                $record->assignRole($role->name);
+            }
 
             $profile = $record->profile;
 

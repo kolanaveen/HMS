@@ -102,7 +102,7 @@ class UserResource extends Resource
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->whereHas('roles', function ($innerQuery) {
-                return $innerQuery->where('name', '!=', 'Super Admin');
+                return $innerQuery->where('name', '!=', User::ROLE_ADMIN);
             }))
             ->columns([
                 ImageColumn::make('profile.avatar'),
