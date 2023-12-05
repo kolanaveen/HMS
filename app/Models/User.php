@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,12 +52,27 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-
     /**
      * Get the profile associated with the user.
      */
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class, 'user_id');
+    }
+
+    /**
+     * Get the documents associated with the patient.
+     */
+    public function patientDocuments(): HasMany
+    {
+        return $this->hasMany(Document::class, 'patient_id');
+    }
+
+    /**
+     * Get the documents associated with the doctor.
+     */
+    public function doctorDocuments(): HasMany
+    {
+        return $this->hasMany(Document::class, 'doctor_id');
     }
 }
