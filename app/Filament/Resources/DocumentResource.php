@@ -69,7 +69,8 @@ class DocumentResource extends Resource
                     ->sortable(),
                 TextColumn::make('date')
                     ->date(),
-                TextColumn::make('description'),
+                TextColumn::make('description')
+                    ->wrap(),
                 TextColumn::make('status')
                     ->badge()
                     ->formatStateUsing(function (string $state): string {
@@ -78,7 +79,9 @@ class DocumentResource extends Resource
                     ->color(fn (string $state): string => match ($state) {
                         '0' => 'danger',
                         '1' => 'success'
-                    })
+                    }),
+                TextColumn::make('created_at')
+                    ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
                 //
