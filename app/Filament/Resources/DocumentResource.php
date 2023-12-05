@@ -39,7 +39,8 @@ class DocumentResource extends Resource
                     ->relationship('doctor', 'name')
                     ->required(),
                 DatePicker::make('date')
-                    ->required(),
+                    ->required()
+                    ->native(false),
                 Select::make('status')
                     ->options([
                         0 => 'Inactive',
