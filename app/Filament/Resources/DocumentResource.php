@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\DocumentResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -84,7 +85,11 @@ class DocumentResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->options([
+                        '0' => 'Inactive',
+                        '1' => 'Active',
+                    ])
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
