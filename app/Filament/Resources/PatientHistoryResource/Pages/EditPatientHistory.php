@@ -16,4 +16,12 @@ class EditPatientHistory extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    /**
+     * @return string
+     */
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
