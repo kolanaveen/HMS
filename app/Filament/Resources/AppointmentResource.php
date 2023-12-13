@@ -66,18 +66,28 @@ class AppointmentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('patient.name'),
-                TextColumn::make('doctor.name'),
-                TextColumn::make('department.name'),
+                TextColumn::make('patient.name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('doctor.name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('department.name')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('appointment_date')
-                    ->date(),
+                    ->date()
+                    ->sortable(),
                 TextColumn::make('status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
                         'cancelled' => 'danger',
                         'confirmed' => 'success',
                         'pending' => 'warning'
-                    })
+                    }),
+                TextColumn::make('created_at')
+                    ->date()
+                    ->toggleable(isToggledHiddenByDefault: true)
 
             ])
             ->filters([
