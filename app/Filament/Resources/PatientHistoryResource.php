@@ -81,7 +81,8 @@ class PatientHistoryResource extends Resource
                         1 => 'Active'
                     ])
                     ->native(false)
-                ->default(1),
+                ->default(1)
+                ->required(),
             ]);
     }
 
