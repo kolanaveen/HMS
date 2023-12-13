@@ -37,6 +37,7 @@ class PatientHistoryResource extends Resource
                 DatePicker::make('date')
                     ->required()
                     ->default(today())
+                    ->maxDate(today())
                     ->native(false),
                 TextInput::make('title')
                     ->required(),
@@ -97,12 +98,12 @@ class PatientHistoryResource extends Resource
                     if ($record->status) {
                         return 'Active';
                     } else {
-                        return 'In Active';
+                        return 'Inactive';
                     }
                 })->badge()
                 ->color(fn (string $state): string => match ($state) {
                     'Active' => 'success',
-                    'In Active' => 'warning'
+                    'Inactive' => 'warning'
                 })
             ])
             ->filters([
