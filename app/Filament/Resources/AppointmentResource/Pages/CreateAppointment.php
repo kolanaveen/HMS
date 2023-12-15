@@ -2,9 +2,10 @@
 
 namespace App\Filament\Resources\AppointmentResource\Pages;
 
-use App\Filament\Resources\AppointmentResource;
 use Filament\Actions;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\CreateRecord;
+use App\Filament\Resources\AppointmentResource;
 
 class CreateAppointment extends CreateRecord
 {
