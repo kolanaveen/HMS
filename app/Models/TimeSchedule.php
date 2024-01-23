@@ -14,7 +14,7 @@ class TimeSchedule extends Model
         'user_id',
         'start_time',
         'end_time',
-        'day_off_number',
+        'week_day_off',
         'appointment_duration',
     ];
 

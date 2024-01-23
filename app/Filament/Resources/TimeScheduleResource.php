@@ -99,7 +99,8 @@ class TimeScheduleResource extends Resource
                             ])
                             ->native(false)
                         ->visible(function (Get $get) {
-                            return $get('role_id') == 2;
+                            $roleName = DB::table('roles')->where('id', $get('role_id'))->first();
+                            return $roleName?->name === User::ROLE_DOCTOR;
                         })
                     ])->columns(),
             ]);
