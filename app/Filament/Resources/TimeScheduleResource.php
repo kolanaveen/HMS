@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TimeScheduleResource\Pages;
-use App\Filament\Resources\TimeScheduleResource\RelationManagers;
 use App\Models\TimeSchedule;
 use App\Models\User;
 use Carbon\Carbon;
@@ -35,7 +34,7 @@ class TimeScheduleResource extends Resource
                     ->schema([
                         Select::make('role_id')
                             ->label('Schedule For')
-                            ->options(DB::table('roles')->where('name', '!=', User::ROLE_ADMIN)->pluck('name', 'id'))
+                            ->options(DB::table('roles')->whereNotIn('name',  [User::ROLE_ADMIN, User::ROLE_PATIENT])->pluck('name', 'id'))
                             ->required()
                             ->native(false)
                             ->preload()
@@ -62,7 +61,8 @@ class TimeScheduleResource extends Resource
                                 '22:00',
                                 '00:00'
                             ])
-                        ->seconds(false),
+                        ->seconds(false)
+                        ->required(),
                         TimePicker::make('end_time')
                             ->datalist([
                                 '15:00',
@@ -73,8 +73,10 @@ class TimeScheduleResource extends Resource
                                 '20:00',
                                 '22:00',
                             ])
+                            ->required()
+                            ->after('start_time')
                             ->seconds(false),
-                        Select::make('day_off_number')
+                        Select::make('week_day_off')
                             ->label('Week off day')
                             ->options([
                                 'sunday' => 'Sunday',
@@ -85,8 +87,9 @@ class TimeScheduleResource extends Resource
                                 'friday' => 'Friday',
                                 'saturday' => 'Saturday',
                             ])
-                        ->native(false)
-                        ->searchable(),
+                            ->required()
+                            ->native(false)
+                            ->searchable(),
                         Select::make('appointment_duration')
                             ->label('Appointment Duration')
                             ->options([
@@ -107,7 +110,8 @@ class TimeScheduleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('user.name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('user.roles.name')
                     ->label('Role'),
                 TextColumn::make('start_time')
@@ -118,7 +122,7 @@ class TimeScheduleResource extends Resource
                     ->getStateUsing(function ($record) {
                         return Carbon::parse($record->end_time)->format('h:i a');
                     }),
-                TextColumn::make('day_off_number')
+                TextColumn::make('week_day_off')
                     ->label('Day off')
                     ->badge()
             ])

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('time_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('day_off_number');
+            $table->string('week_day_off');
             $table->time('start_time');
             $table->time('end_time');
             $table->time('appointment_duration')->nullable();

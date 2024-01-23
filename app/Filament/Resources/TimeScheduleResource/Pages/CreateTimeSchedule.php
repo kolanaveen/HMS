@@ -20,14 +20,14 @@ class CreateTimeSchedule extends CreateRecord
         return $this->getResource()::getUrl('index');
     }
 
-    protected function handleRecordCreation(array $data): Model
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
-        return TimeSchedule::create([
-            'user_id' => $data['user_id'],
-            'start_time' => $data['start_time'],
-            'end_time'=> $data['end_time'],
-            'day_off_number'=> $data['day_off_number'],
-            'appointment_duration' => $data['appointment_duration'] ?? null,
-        ]);
+        unset($data['role_id']);
+
+        return $data;
     }
 }
