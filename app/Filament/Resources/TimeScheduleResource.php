@@ -98,7 +98,11 @@ class TimeScheduleResource extends Resource
                                 '00:30' => '30 minutes',
                             ])
                             ->native(false)
-                        ->visible(function (Get $get) {
+                        ->visible(function ($record, Get $get) {
+                            if ($record) {
+                                return $record->user->hasRole('Doctor');
+                            }
+
                             $roleName = DB::table('roles')->where('id', $get('role_id'))->first();
                             return $roleName?->name === User::ROLE_DOCTOR;
                         })
