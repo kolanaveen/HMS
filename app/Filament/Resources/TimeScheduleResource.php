@@ -100,7 +100,7 @@ class TimeScheduleResource extends Resource
                             ->native(false)
                         ->visible(function ($record, Get $get) {
                             if ($record) {
-                                return $record->user->hasRole('Doctor');
+                                return $record->user->hasRole(User::ROLE_DOCTOR);
                             }
 
                             $roleName = DB::table('roles')->where('id', $get('role_id'))->first();
